@@ -1,24 +1,24 @@
-setup: quine_maker
-	./quine_maker > quine.c
+all: quine
 
-run: quine
-
-clean:
-	rm quine_maker
-	rm quine.c
-	rm quine
-
-quine: quine.c
+run:
 	gcc -o quine quine.c
 	@echo
 	./quine
 	@echo
+	touch quine.c
 	./quine > quine.c
 
-quine.c: setup
+clean:
+	rm -f builder quine.c quine
 
-quine_maker: quine_maker.c
-	gcc -o quine_maker quine_maker.c
+quine: quine.c
+	gcc -o quine quine.c
+
+quine.c: builder
+	./builder $@
+
+builder: builder.c
+	gcc -o $@ $<
 
 
 
