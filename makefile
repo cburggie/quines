@@ -5,20 +5,18 @@ run:
 	@echo
 	./quine
 	@echo
-	touch quine.c
-	./quine > quine.c
+	./quine quine.c
 
 clean:
 	rm -f builder quine.c quine
 
-quine: quine.c
-	gcc -o quine quine.c
+quine.c: quine
+	./quine quine.c
 
-quine.c: builder
-	./builder $@
+quine: source.c
+	gcc -o quine source.c
 
-builder: builder.c
-	gcc -o $@ $<
+
 
 
 
