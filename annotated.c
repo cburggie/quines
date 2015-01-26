@@ -5,8 +5,8 @@
 typedef char* s;
 
 
-
-main()
+//usage "quine [output file]"
+main(int c, s v[])
 {
 	
 	/* We're immediately getting into some really aweful programming. The
@@ -15,16 +15,20 @@ main()
 	 * only works on a 32 bit, little-endian machine. Basically, I'm definine a
 	 * string literal, putting ASCII values into consecutive bytes in the
 	 * integer array. The string literal translates to the equivalent of
-	 * "%s%s%s\n\0"\0\"," which has three null characters. I use manual offsets
-	 * below to access the corresponding 3 cstrings.
+	 * "%s%s%s\n\0"\0\",\0w" which has four null characters. I use manual offsets
+	 * below to access the corresponding 4 cstrings.
 	 * */
 	int j,
 		f[] = {
 			0x73257325,
 			0x000a7325,
 			0x2c220022,
-			0x100
+			0x77007700
 		};
+
+	/* Here we wet up the output file, if not specified we'll print to stdout
+	 * */
+	FILE*of;if(c==2)of=fopen(v[1],(s)f+0xd);else of=stdout;
 	
 	/* p is simply a array of strings which store the source of the file.
 	 * We only need to source a few double-quote characters and some newlines
@@ -32,8 +36,8 @@ main()
 	 * */
 	s p[] = {
 		"#include <stdio.h>",
-		"typedef char* s;main(){int j,f[]={0x73257325,0x000a7325,0x2c220022,0x100};s p[]={",
-		"};for(j=0;j<2;j++)printf((s)f,(s)f+0xc,(s)f+0xc,p[j]);for(j=0;j<2;j++)printf((s)f,(s)f+8,p[j],(s)f+0xa);printf((s)f,(s)f+8,p[j],(s)f+8);printf((s)f,p[j],(s)f+0xc,(s)f+0xc);"
+		"typedef char* s;main(int c,s v[]){int j,f[]={0x73257325,0x000a7325,0x2c220022,0x77007700};FILE*of;if(c==2)of=fopen(v[1],(s)f+0xd);else of=stdout;s p[]={",
+		"};for(j=0;j<2;j++)fprintf(of,(s)f,(s)f+0xc,(s)f+0xc,p[j]);for(j=0;j<2;j++)fprintf(of,(s)f,(s)f+8,p[j],(s)f+0xa);fprintf(of,(s)f,(s)f+8,p[j],(s)f+8);fprintf(of,(s)f,p[j],(s)f+0xc,(s)f+0xc);"
 		};
 	
 
@@ -48,7 +52,7 @@ main()
 	 * Thus, this for-loop prints the first two lines of the source code.
 	 * */
 	for(j=0;j<2;j++)
-		printf((s)f,(s)f+0xc,(s)f+0xc,p[j]);
+		fprintf(of,(s)f,(s)f+0xc,(s)f+0xc,p[j]);
 	
 
 	/* Similarly to the the above, we print the first two lines of source. This
@@ -57,14 +61,16 @@ main()
 	 * <"line",\n> instead of <line\n>
 	 * */
 	for(j=0;j<2;j++)
-		printf((s)f,(s)f+8,p[j],(s)f+0xa);
+		fprintf(of,(s)f,(s)f+8,p[j],(s)f+0xa);
 
 	/* We print the last line of source without the trailing comma.
 	 * */
-	printf((s)f,(s)f+8,p[j],(s)f+8);
+	fprintf(of,(s)f,(s)f+8,p[j],(s)f+8);
 
 	/* We print the last line of source in the usual manner
 	 * */
-	printf((s)f,p[j],(s)f+0xc,(s)f+0xc);
-
+	fprintf(of,(s)f,p[j],(s)f+0xc,(s)f+0xc);
+	
+	//close file if we're printing to one
+	if (c==2) fclose(of);
 }
