@@ -1,25 +1,25 @@
 all: quine
 
-run:
-	gcc -o quine quine.c
+run: quine.c
+	gcc -o quine $<
 	@echo
-	./quine
+	./quine $<
 	@echo
-	./quine quine.c
+	@cat $<
 
 clean:
-	rm -f builder quine.c quine
+	rm -f simple quine.c quine
 
 
-simple: simple.c
-	gcc -o simple simple.c
-	./simple > simple.c
+simple: csource/simple.c
+	gcc -o $@ $<
+	./$@ > %<
 
 quine.c: quine
-	./quine quine.c
+	./$< @@
 
-quine: source.c
-	gcc -o quine source.c
+quine: csource/source.c
+	gcc -o $@ $<
 
 
 
