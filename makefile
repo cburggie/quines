@@ -10,6 +10,11 @@ run:
 clean:
 	rm -f builder quine.c quine
 
+
+simple: simple.c
+	gcc -o simple simple.c
+	./simple > simple.c
+
 quine.c: quine
 	./quine quine.c
 
